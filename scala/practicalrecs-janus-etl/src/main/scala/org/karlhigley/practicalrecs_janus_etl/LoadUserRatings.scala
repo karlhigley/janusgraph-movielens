@@ -11,7 +11,7 @@ object LoadUserRatings extends App {
   // Create Spark session
   val spark: SparkSession = SparkSession
     .builder()
-    .appName("Load Movielens ratings")
+    .appName("Load Movielens user ratings")
     .getOrCreate()
 
   import spark.implicits._

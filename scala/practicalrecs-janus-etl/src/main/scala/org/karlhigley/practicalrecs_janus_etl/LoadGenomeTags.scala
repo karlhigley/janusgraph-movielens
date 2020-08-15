@@ -10,7 +10,7 @@ object LoadGenomeTags extends App {
   // Create Spark session
   val spark: SparkSession = SparkSession
     .builder()
-    .appName("Load Movielens movies")
+    .appName("Load Movielens genome tags and scores")
     .getOrCreate()
 
   import spark.implicits._

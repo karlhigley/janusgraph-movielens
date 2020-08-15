@@ -49,7 +49,7 @@ object LoadMovies extends App {
   // Load movielens movies from CSV
   val csvOptions: Map[String,String] = Map("inferSchema"->"true", "delimiter"->",","header"->"true")
   val datasetPath: Path = os.Path(args(0)) / "movies.csv"
-  val movies: Dataset[MovieCsv] = spark.read.options(csvOptions).csv(datasetPath.toString()).as[MovieCsv]
+  val movies: Dataset[MovieCsv] = spark.read.options(csvOptions).csv(datasetPath.toString()).as[MovieCsv].repartition(256)
 
   val parsedMovies: RDD[MovieVertex] = movies.rdd.map(parseMovie)
 
