@@ -22,8 +22,8 @@ object LoadGenomeTags extends App {
   val csvOptions: Map[String,String] = Map("inferSchema"->"true", "delimiter"->",","header"->"true")
   val tagsPath: Path = os.Path(args(0)) / "genome-tags.csv"
   val scoresPath: Path = os.Path(args(0)) / "genome-scores.csv"
-  val genomeTags: Dataset[GenomeTagCsv] = spark.read.options(csvOptions).csv(tagsPath.toString()).as[GenomeTagCsv]
-  val genomeScores: Dataset[GenomeScoreCsv] = spark.read.options(csvOptions).csv(scoresPath.toString()).as[GenomeScoreCsv]
+  val genomeTags: Dataset[GenomeTagCsv] = spark.read.options(csvOptions).csv(tagsPath.toString()).as[GenomeTagCsv].repartition(256)
+  val genomeScores: Dataset[GenomeScoreCsv] = spark.read.options(csvOptions).csv(scoresPath.toString()).as[GenomeScoreCsv].repartition(256)
 
   // Create list of unique tags and movies in the dataset
   val tagVertexIdPairs: List[(Int, Object)] = genomeTags.collect().grouped(100).flatMap(group => {
@@ -36,7 +36,7 @@ object LoadGenomeTags extends App {
   }).toList
   val tagVertexMapping: Map[Int, Object] = Map(tagVertexIdPairs: _*)
 
-  val uniqueMovies: Array[Int] = genomeScores.map(_.movieId).distinct().collect().sorted
+  val uniqueMovies: Array[Int] = genomeScores.map(_.movieId).distinct().collect()
 
   val movieVertexIdPairs: Seq[(Int, Object)] = uniqueMovies.map(m => {
     val movieVertex = mlt.V().has("MOVIE", "movieId", m).next()

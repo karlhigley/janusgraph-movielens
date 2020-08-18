@@ -22,11 +22,11 @@ object LoadUserRatings extends App {
   // Load movielens ratings from CSV
   val csvOptions: Map[String,String] = Map("inferSchema"->"true", "delimiter"->",", "header"->"true")
   val datasetPath: Path = os.Path(args(0)) / "ratings.csv"
-  val ratings: Dataset[RatingCsv] = spark.read.options(csvOptions).csv(datasetPath.toString()).as[RatingCsv]
+  val ratings: Dataset[RatingCsv] = spark.read.options(csvOptions).csv(datasetPath.toString()).as[RatingCsv].repartition(256)
 
   // Create list of unique users in the dataset
-  val uniqueUsers: Array[Int] = ratings.map(_.userId).distinct().collect().sorted
-  val uniqueMovies: Array[Int] = ratings.map(_.movieId).distinct().collect().sorted
+  val uniqueUsers: Array[Int] = ratings.map(_.userId).distinct().collect()
+  val uniqueMovies: Array[Int] = ratings.map(_.movieId).distinct().collect()
 
   val userVertexIdPairs: List[(Int, Object)] = uniqueUsers.grouped(100).flatMap(group => {
     val pairs = group.map(u => {

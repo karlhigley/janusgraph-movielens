@@ -74,7 +74,7 @@ object LoadOmdbProperties extends App {
 
   val datasetPath: Path = os.Path(args(0)) / "omdb-json"
   val omdbJson: Dataset[OmdbResponse] =
-      session.read.options(jsonOptions).json(datasetPath.toString()).as[OmdbResponse].coalesce(16)
+      session.read.options(jsonOptions).json(datasetPath.toString()).as[OmdbResponse].repartition(256)
 
   val parsingSuccesses: LongAccumulator = session.sparkContext.longAccumulator("Parsing successes")
   val parsingFailures: LongAccumulator = session.sparkContext.longAccumulator("Parsing failures")
