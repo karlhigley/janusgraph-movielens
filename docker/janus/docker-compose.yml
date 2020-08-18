@@ -20,10 +20,11 @@ services:
     image: janusgraph/janusgraph:latest
     container_name: jce-janusgraph
     environment:
-      JANUS_PROPS_TEMPLATE: cassandra-es
-      janusgraph.storage.backend: cql
-      janusgraph.storage.hostname: jce-cassandra
-      janusgraph.index.search.hostname: jce-elastic
+      - "JAVA_OPTIONS=-Xms4096m -Xmx4096m"
+      - "JANUS_PROPS_TEMPLATE=cassandra-es"
+      - "janusgraph.storage.backend=cql"
+      - "janusgraph.storage.hostname=jce-cassandra"
+      - "janusgraph.index.search.hostname=jce-elastic"
     ports:
       - "8182:8182"
     networks:
@@ -56,7 +57,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.6.0
     container_name: jce-elastic
     environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m"
       - "http.host=0.0.0.0"
       - "network.host=0.0.0.0"
       - "transport.host=127.0.0.1"
