@@ -18,7 +18,7 @@ case class OmdbResponse(movieId: String, imdbId: String, response: Option[String
 final case class MovieOmdb(
   movieId: String,
   imdbId: String,
-  tmdbId: String,
+  tmdbId: Option[String],
   rated: Option[String],
   directors: Option[List[String]],
   writers: Option[List[String]],

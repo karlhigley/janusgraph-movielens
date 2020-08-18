@@ -14,11 +14,20 @@ object LoadOmdbProperties extends App {
     csl.split(separator).map(_.trim).toList
   }
 
+  def parseNameWithNotes(combinedText: String): (String, Option[String]) = {
+    combinedText.replace(")", "").split('(').map(_.trim) match {
+      case Array(name, notes) => (name, Some(notes))
+      case Array(name) => (name, None)
+      case _ => (combinedText, None)
+    }
+  }
+
   def buildVertexMapping(graph: JanusGraph, names: List[String], nodeType: String, propertyName: String): Map[String, Object] = {
     val vertexIdPairs = names.grouped(10).flatMap(group => {
       val pairs = group.map(n => {
-        val vertex = graph.traversal().addV(nodeType).property(propertyName, n).next()
-        n -> vertex.id
+        val (name, _) = parseNameWithNotes(n)
+        val vertex = graph.traversal().addV(nodeType).property(propertyName, name).next()
+        name -> vertex.id
       })
       graph.tx.commit
       pairs
@@ -43,7 +52,7 @@ object LoadOmdbProperties extends App {
     val imdbVotes = Try(parsed("imdbVotes").str.replaceAll("[^\\d.]+", "").toLong).toOption
 
     MovieOmdb(
-      movieId, imdbId, "", rated,
+      movieId, imdbId, None, rated,
       directors, writers, actors, languages, countries,
       boxOffice, metascore, imdbScore, imdbVotes
     )
@@ -137,31 +146,41 @@ object LoadOmdbProperties extends App {
         // Add properties and corresponding edges to other related entities
         for (directors <- movie.directors) {
           for (d <- directors) {
-            mlt.V(movieVertex.id).as("m").V(directorVertexMapping(d)).addE("DIRECTED").from("m").next()
+            val (name, notes) = parseNameWithNotes(d)
+            val edge = mlt.V(movieVertex.id).as("m").V(directorVertexMapping(name)).addE("DIRECTED_BY").from("m").next()
+            notes.foreach(mlt.E(edge.id).property("notes", _))
           }
         }
         
         for (writers <- movie.writers) {
           for (w <- writers) {
-            mlt.V(movieVertex.id).as("m").V(writerVertexMapping(w)).addE("WROTE").from("m").next()
+            val (name, notes) = parseNameWithNotes(w)
+            val edge = mlt.V(movieVertex.id).as("m").V(writerVertexMapping(name)).addE("WRITTEN_BY").from("m").next()
+            notes.foreach(mlt.E(edge.id).property("notes", _))
           }
         }
 
         for (actors <- movie.actors) {
           for (a <- actors) {
-            mlt.V(movieVertex.id).as("m").V(actorVertexMapping(a)).addE("ACTED").from("m").next()
+            val (name, notes) = parseNameWithNotes(a)
+            val edge = mlt.V(movieVertex.id).as("m").V(actorVertexMapping(name)).addE("ACTED_BY").from("m").next()
+            notes.foreach(mlt.E(edge.id).property("notes", _))
           }
         }
 
         for (languages <- movie.languages) {
           for (l <- languages) {
-            mlt.V(movieVertex.id).as("m").V(languageVertexMapping(l)).addE("SPOKEN").from("m").next()
+            val (name, notes) = parseNameWithNotes(l)
+            val edge = mlt.V(languageVertexMapping(name)).as("l").V(movieVertex.id).addE("SPOKEN_IN").from("l").next()
+            notes.foreach(mlt.E(edge.id).property("notes", _))
           }
         }
 
         for (countries <- movie.countries) {
           for (c <- countries) {
-            mlt.V(movieVertex.id).as("m").V(countryVertexMapping(c)).addE("PRODUCED").from("m").next()
+            val (name, notes) = parseNameWithNotes(c)
+            val edge = mlt.V(countryVertexMapping(name)).as("c").V(movieVertex.id).addE("PRODUCED_IN").from("c").next()
+            notes.foreach(mlt.E(edge.id).property("notes", _))
           }
         }
 

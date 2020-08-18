@@ -60,7 +60,7 @@ object LoadUserRatings extends App {
 
         // Connect vertices with rating edge and set properties        
         mlt.V(userVertexId).as("u")
-          .V(movieVertexId).addE("RATED").from("u")
+          .V(movieVertexId).addE("RATED_AS").from("u")
           .property("score", rating.rating.toFloat)
           .property("timestamp", rating.timestamp)
           .next()

@@ -89,17 +89,15 @@ object LoadMovies extends App {
 
         movie.year.foreach(mlt.V(movieVertex).property("movieYear", _).next())
 
-        if (movie.genres.length > 0) {
-          mlt.V(movieVertex).property("movieGenres", movie.genres).next()
-        }
-
+        movie.genres.foreach(mlt.V(movieVertex).property("movieGenres", _).next())
+ 
         // Add year and genre edges
         movie.year.foreach(y => {
-          mlt.V(movieVertex).as("m").V(yearVertexMapping(y)).addE("RELEASED").from("m").next()
+          mlt.V(movieVertex).as("m").V(yearVertexMapping(y)).addE("RELEASED_IN").from("m").next()
         })
 
         movie.genres.foreach(g => {
-          mlt.V(movieVertex).as("m").V(genreVertexMapping(g)).addE("CATEGORIZED").from("m").next()
+          mlt.V(movieVertex).as("m").V(genreVertexMapping(g)).addE("CATEGORIZED_AS").from("m").next()
         })
 
       }

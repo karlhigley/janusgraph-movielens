@@ -18,18 +18,17 @@ language = mgmt.makeVertexLabel("LANGUAGE").make()
 country = mgmt.makeVertexLabel("COUNTRY").make()
 
 // Edge labels from Movielens
-released = mgmt.makeEdgeLabel("RELEASED").make()
-categorized = mgmt.makeEdgeLabel("CATEGORIZED").make()
-labeled = mgmt.makeEdgeLabel("TAGGED").make()
-estimated = mgmt.makeEdgeLabel("ESTIMATED").make()
-rated = mgmt.makeEdgeLabel("RATED").make()
+released = mgmt.makeEdgeLabel("RELEASED_IN").make()
+categorized = mgmt.makeEdgeLabel("CATEGORIZED_AS").make()
+estimated = mgmt.makeEdgeLabel("ESTIMATED_AT").make()
+rated = mgmt.makeEdgeLabel("RATED_AS").make()
 
 // Edge labels from OMDB
-directed = mgmt.makeEdgeLabel("DIRECTED").make()
-wrote = mgmt.makeEdgeLabel("WROTE").make()
-acted = mgmt.makeEdgeLabel("ACTED").make()
-spoken = mgmt.makeEdgeLabel("SPOKEN").make()
-produced = mgmt.makeEdgeLabel("PRODUCED").make()
+directed = mgmt.makeEdgeLabel("DIRECTED_BY").make()
+wrote = mgmt.makeEdgeLabel("WRITTEN_BY").make()
+acted = mgmt.makeEdgeLabel("ACTED_BY").make()
+spoken = mgmt.makeEdgeLabel("SPOKEN_IN").make()
+produced = mgmt.makeEdgeLabel("PRODUCED_IN").make()
 
 // Vertex properties from Movielens
 movieId = mgmt.makePropertyKey("movieId").dataType(Long.class).make()
@@ -67,6 +66,8 @@ timestamp = mgmt.makePropertyKey("timestamp").dataType(Long.class).make()
 
 relevance = mgmt.makePropertyKey("relevance").dataType(Float.class).make()
 
+notes = mgmt.makePropertyKey("notes").dataType(String.class).make()
+
 // Add properties to vertex types
 mgmt.addProperties(movie, movieId, movieImdbId, movieTmdbId, movieTitle, movieYear, \
                     movieRated, movieGenres, movieBoxOffice, movieMetascore, \
@@ -85,6 +86,12 @@ mgmt.addProperties(country, countryName)
 // Add properties to edge types
 mgmt.addProperties(rated, score, timestamp)
 mgmt.addProperties(estimated, relevance)
+
+mgmt.addProperties(directed, notes)
+mgmt.addProperties(wrote, notes)
+mgmt.addProperties(acted, notes)
+mgmt.addProperties(spoken, notes)
+mgmt.addProperties(produced, notes)
 
 // Build composite indices for Movielens properties
 mgmt.buildIndex('byMovieIdComposite', Vertex.class).addKey(movieId).unique().indexOnly(movie).buildCompositeIndex()

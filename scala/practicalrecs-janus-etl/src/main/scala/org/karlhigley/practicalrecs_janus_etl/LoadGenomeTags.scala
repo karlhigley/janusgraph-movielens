@@ -60,7 +60,7 @@ object LoadGenomeTags extends App {
 
         // Connect vertices with estimated relevance edge and set properties        
         mlt.V(tagVertexId).as("t")
-          .V(movieVertexId).addE("ESTIMATED").from("t")
+          .V(movieVertexId).addE("ESTIMATED_AT").from("t")
           .property("relevance", score.relevance.toFloat)
           .next()
       }
