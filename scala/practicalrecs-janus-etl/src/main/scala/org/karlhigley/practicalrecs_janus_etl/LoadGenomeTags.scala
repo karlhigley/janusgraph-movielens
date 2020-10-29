@@ -5,7 +5,7 @@ import org.apache.spark.sql.Dataset
 import org.janusgraph.core.JanusGraph
 import os.Path
 
-object Tags extends App {
+object LoadGenomeTags extends App {
   
   // Create Spark session
   val spark: SparkSession = SparkSession

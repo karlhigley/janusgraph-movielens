@@ -6,7 +6,7 @@ import org.janusgraph.core.JanusGraph
 import os.Path
 
 
-object Ratings extends App {
+object LoadUserRatings extends App {
 
   // Create Spark session
   val spark: SparkSession = SparkSession

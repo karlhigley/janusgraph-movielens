@@ -8,7 +8,7 @@ import org.janusgraph.core.JanusGraph
 import org.apache.spark.util.LongAccumulator
 import os.Path
 
-object IngestOmdb extends App {
+object LoadOmdbProperties extends App {
 
   def parseCommaSeparatedList(csl: String, separator: Char = ','): List[String] = {
     csl.split(separator).map(_.trim).toList

@@ -9,7 +9,7 @@ import org.apache.spark.sql.Dataset
 import os.Path
 
 
-object FetchOmdb extends App {
+object FetchOmdbData extends App {
 
   // Create Spark session
   val session: SparkSession = SparkSession

@@ -7,7 +7,7 @@ import org.janusgraph.core.JanusGraph
 import os.Path
 
 
-object Movies extends App {
+object LoadMovies extends App {
   def toInt(s: String): Option[Int] = {
     try {
       Some(s.toInt)
